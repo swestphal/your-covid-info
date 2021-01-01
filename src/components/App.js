@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-
+import  {useThemeMode} from "./useThemeMode"
 /* Theme Provider */
 import {ThemeProvider} from "styled-components";
 /* ThemeProvider is a helper component in the styled-components library that provides theming support.
@@ -12,27 +12,26 @@ https://styled-components.com/docs/advanced#theming
 
 import { GlobalStyles } from "../styles/GlobalStyles";
 import { lightTheme, darkTheme } from "./Themes"
+import ThemeToggler from "./ThemeToggler";
 require('dotenv').config();
 
 const App = () => {
-    /* In order to use a toggling method for the theme, we need a state that holds our selected themes  value.
-    We set a theme state, and set the initial state to light, using the useState hook.
-    */
-    const [theme, setTheme] = useState('light');
 
-    /* Check the state of the theme by ternary operator and set the current value */
-    const themeToggler = () => {
-        theme === 'light' ? setTheme('dark') : setTheme('light')
-    }
+    const [theme, themeToggler, mountedComponent] = useThemeMode();
+    const themeMode = theme === 'light' ? lightTheme : darkTheme;
+
+    /* return empty div if useThemeMode component is mounted -  this avoids loading the light theme first on
+    page reload if user has selected the dark theme */
+    if(!mountedComponent) return <div/>
     return (
         /* ThemeProvider is a helper component of the styled-components and wraps everything
         in the return statement and injects any components below it */
-        <ThemeProvider theme={theme === 'light' ? lightTheme : darkTheme}>
+        <ThemeProvider theme={themeMode}>
             <>
                 <GlobalStyles/>
                 <div className="App">
                     {/* Theme toggle button */}
-                    <button onClick={themeToggler}>Switch Theme</button>
+                    <ThemeToggler  theme={theme} toggleTheme={themeToggler} />
                 </div>
             </>
         </ThemeProvider>
