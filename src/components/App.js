@@ -17,6 +17,7 @@ https://styled-components.com/docs/advanced#theming
 import { GlobalStyles } from "../styles/GlobalStyles";
 import { lightTheme, darkTheme } from "./Themes"
 import ThemeToggler from "./ThemeToggler";
+import News from "./News";
 require('dotenv').config();
 
 const App = () => {
@@ -26,19 +27,19 @@ const App = () => {
 
 
     const [news,setNews] = useState([]);
-
+console.log(theme);
     useEffect(() => {
         const getNewsData = async () => {
             const response = await newsApi.get('/everything',{
                 params: {
                     language:'en',
                     from:daysFromTodayInDate(30),
-                    q: 'covid',
+                    q: 'covid+OR+coronavirus',
                     sortBy:'publishedAt'
                 }
             })
-            setNews(response)
-            console.log(response)
+            setNews(response.data.articles)
+            console.log(response.data.articles)
         }
         getNewsData()
 
@@ -59,6 +60,7 @@ const App = () => {
                 <div className="App">
                     {/* Theme toggle button */}
                     <ThemeToggler  theme={theme} toggleTheme={themeToggler} />
+                    <News news={news} theme={theme}/>
                 </div>
             </>
         </ThemeProvider>
