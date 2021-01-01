@@ -1,7 +1,11 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import  {useThemeMode} from "./useThemeMode"
 /* Theme Provider */
 import {ThemeProvider} from "styled-components";
+import newsApi from "../apis/newsApi";
+import {daysFromTodayInDate} from "../utils";
+
+
 /* ThemeProvider is a helper component in the styled-components library that provides theming support.
 This helper component injects a theme into all React component below itself via the Context API.
 In the rendering tree, all styled-components will have access to the provided theme,
@@ -19,6 +23,29 @@ const App = () => {
 
     const [theme, themeToggler, mountedComponent] = useThemeMode();
     const themeMode = theme === 'light' ? lightTheme : darkTheme;
+
+
+    const [news,setNews] = useState([]);
+
+    useEffect(() => {
+        const getNewsData = async () => {
+            const response = await newsApi.get('/everything',{
+                params: {
+                    language:'en',
+                    from:daysFromTodayInDate(30),
+                    q: 'covid',
+                    sortBy:'publishedAt'
+                }
+            })
+            setNews(response)
+            console.log(response)
+        }
+        getNewsData()
+
+    }, []);
+
+
+
 
     /* return empty div if useThemeMode component is mounted -  this avoids loading the light theme first on
     page reload if user has selected the dark theme */
