@@ -8,6 +8,7 @@ const Searchbar = (props) => {
   function escapeRegexCharacters(str) {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   }
+
   const getSuggestions = () => {
     if (searchTerm.length > 0) {
       const regex = new RegExp('^' + searchTerm, 'i');
@@ -15,16 +16,7 @@ const Searchbar = (props) => {
       const filteredResults = props.countries.filter((country) =>
         regex.test(country.name)
       );
-      const filteredCountries = filteredResults.map((country) => {
-        return (
-          <div key={country.value} className="item">
-            <div className="content">
-              <div className="header">{country.name}</div>
-            </div>
-          </div>
-        );
-      });
-      setResults(filteredCountries);
+      setResults(filteredResults);
     }
   };
 
@@ -32,6 +24,15 @@ const Searchbar = (props) => {
     setSearchTerm(escapeRegexCharacters(e.target.value));
     getSuggestions();
   };
+
+  const renderedResults = results.map((country) => (
+    <div key={country.value} className="item">
+      <div className="content">
+        <div className="header">{country.name}</div>
+      </div>
+    </div>
+  ));
+
   return (
     <div>
       <div className="ui form">
@@ -40,7 +41,7 @@ const Searchbar = (props) => {
           <input value={searchTerm} onChange={onChangeSearch} />
         </div>
       </div>
-      <div>{results}</div>
+      <div>{renderedResults}</div>
     </div>
   );
 };
