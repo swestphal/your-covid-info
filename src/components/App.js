@@ -25,8 +25,13 @@ const App = () => {
   const [countries, setCountries] = useState([]);
   const [activeCountry, setActiveCountry] = useState('www');
 
-  const onSearchFormSubmit = () => {
-    console.log('submit');
+  const [searchResults, setSearchResults] = useState([]);
+
+  const onSearchFormSubmit = (countryCode) => {
+    console.log(countryCode);
+    if (countryCode) {
+      setActiveCountry(countryCode);
+    }
   };
 
   const onSearchChange = () => {
@@ -48,6 +53,7 @@ const App = () => {
             value: country.countryInfo.iso2,
           }));
           setCountries(countries);
+          setSearchResults(countries);
         });
     };
     getCountriesData();
@@ -64,11 +70,12 @@ const App = () => {
         },
       });
       setNews(response.data.articles);
-      console.log(response.data.articles);
     };
     getNewsData();
   }, []);
-
+  const setSearchResultList = (data) => {
+    setSearchResults(data);
+  };
   /* return empty div if useThemeMode component is mounted -  this avoids loading the light theme first on
     page reload if user has selected the dark theme */
   if (!mountedComponent) return <div />;
@@ -86,9 +93,17 @@ const App = () => {
           <Searchbar
             countries={countries}
             className={styles.App__search}
+            setSearchResultList={setSearchResultList}
+            onSelect={onSearchFormSubmit}
           ></Searchbar>
           <div className={styles.App__graph}></div>
-          <div className={styles.App__countries}></div>
+
+          <div className={styles.App__countries}>
+            {searchResults.map((country) => {
+              return <p key={country.name}>{country.name}</p>;
+            })}
+          </div>
+
           <div className={styles.App__news}>
             <News news={news} theme={theme} />
           </div>
