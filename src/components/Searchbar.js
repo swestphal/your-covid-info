@@ -1,8 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import styles from '../styles/Searchbar.module.scss'
+import { FiGlobe } from "react-icons/fi";
 
 const Searchbar = (props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState(props.countries);
+  const [openAutosuggest, setOpenAutosuggest] = useState(false)
+  const [found, setFound] = useState('');
+  const ref = useRef(null);
 
   useEffect(() => {
     console.log('useeff search');
@@ -11,9 +16,27 @@ const Searchbar = (props) => {
 
   useEffect(() => {
     console.log('useeffect results');
-    console.log(results);
     props.setSearchResultList(results);
   }, [results]);
+  useEffect(() => {
+    /**
+     * Alert if clicked on outside of element
+     */
+    function handleClickOutside(e) {
+      console.log(ref)
+      if (ref.current && !ref.current.contains(e.target)) {
+        console.log("click outside", found)
+      }
+    }
+
+    // Bind the event listener
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      console.log("unbind")
+      // Unbind the event listener on clean up
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [ref]);
 
   // https://developer.mozilla.org/en/docs/Web/JavaScript/Guide/Regular_Expressions#Using_Special_Characters
   function escapeRegexCharacters(str) {
@@ -39,7 +62,6 @@ const Searchbar = (props) => {
 
   const getSuggestions = () => {
     if (searchTerm.length === 0) {
-      console.log('zero');
       setResults(props.countries);
     } else {
       const regex = new RegExp('^' + searchTerm, 'i');
@@ -47,6 +69,7 @@ const Searchbar = (props) => {
       const filteredResults = props.countries.filter((country) =>
         regex.test(country.name)
       );
+      setOpenAutosuggest(true)
       setResults(filteredResults);
     }
   };
@@ -56,16 +79,24 @@ const Searchbar = (props) => {
     const enteredValue = e.target.value;
     const firstUpperValue =
       enteredValue.charAt(0).toUpperCase() + enteredValue.slice(1);
-    //todo extract first upper function in utils
+    // TODO extract first upper function in utils
     setSearchTerm(firstUpperValue);
   };
+
+  const clearAutosuggest = (e) => {
+    console.log(e)
+    setSearchTerm('');
+    setOpenAutosuggest(false);
+  }
+
 
   const renderedResults = results.map((country, i) => (
     <div
       key={`${country.name}_${i}`}
-      className="item"
+      className={`${styles.Search__autosuggest_item} theme__search__autosuggest_item`}
       countrycode={country.value}
       onClick={(e) => {
+        setFound(country.value)
         props.onSelect(country.value);
         setSearchTerm(country.name);
       }}
@@ -76,15 +107,17 @@ const Searchbar = (props) => {
 
   return (
     <div>
-      <div className="ui form">
-        <div className="field">
-          <label>Enter country</label>
-          <input value={searchTerm} onChange={onChangeSearch} />
+      <div className={styles.Search} ref={ref} >
+        <div className={`${styles.Search__input} theme__search__input`}>
+
+          <input value={searchTerm} onClick={(e) => clearAutosuggest(e)} onChange={onChangeSearch} data={found} /><FiGlobe></FiGlobe>
         </div>
-        <div>{renderedResults}</div>
+        <div className={`${styles.Search__autosuggest}  theme__search__autosuggest ${openAutosuggest === true && found !== true ? 'active' : ''}`}>{renderedResults}</div>
       </div>
     </div>
   );
 };
 
 export default Searchbar;
+
+// TODO when click outside of input close autosuggest
