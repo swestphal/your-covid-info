@@ -8,6 +8,7 @@ const Searchbar = (props) => {
   const [openAutosuggest, setOpenAutosuggest] = useState(false)
   const [found, setFound] = useState('');
   const ref = useRef(null);
+  const refInput = useRef(null);
 
   useEffect(() => {
     console.log('useeff search');
@@ -23,7 +24,7 @@ const Searchbar = (props) => {
      * Alert if clicked on outside of element
      */
     function handleClickOutside(e) {
-      console.log(ref)
+      console.log(refInput.current.getAttribute("data-country-code"))
       if (ref.current && !ref.current.contains(e.target)) {
         console.log("click outside", found)
       }
@@ -110,7 +111,7 @@ const Searchbar = (props) => {
       <div className={styles.Search} ref={ref} >
         <div className={`${styles.Search__input} theme__search__input`}>
 
-          <input value={searchTerm} onClick={(e) => clearAutosuggest(e)} onChange={onChangeSearch} data={found} /><FiGlobe></FiGlobe>
+          <input ref={refInput} value={searchTerm} onClick={(e) => clearAutosuggest(e)} onChange={onChangeSearch} data-country-code={found} /><FiGlobe></FiGlobe>
         </div>
         <div className={`${styles.Search__autosuggest}  theme__search__autosuggest ${openAutosuggest === true && found !== true ? 'active' : ''}`}>{renderedResults}</div>
       </div>
