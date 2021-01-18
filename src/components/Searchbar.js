@@ -6,17 +6,16 @@ const Searchbar = (props) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [results, setResults] = useState(props.countries);
   const [openAutosuggest, setOpenAutosuggest] = useState(false)
-  const [found, setFound] = useState('');
+  const [foundCode, setFoundCode] = useState('');
+  const [found, setFound] = useState(false);
   const ref = useRef(null);
   const refInput = useRef(null);
 
   useEffect(() => {
-    console.log('useeff search');
     getSuggestions();
   }, [searchTerm]);
 
   useEffect(() => {
-    console.log('useeffect results');
     props.setSearchResultList(results);
   }, [results]);
   useEffect(() => {
@@ -24,14 +23,18 @@ const Searchbar = (props) => {
      * Alert if clicked on outside of element
      */
     function handleClickOutside(e) {
-      console.log(refInput.current.getAttribute("data-country-code"))
+
       if (ref.current && !ref.current.contains(e.target)) {
-        console.log("click outside", found)
+        console.log("click outside", refInput.current)
+        if (refInput.current.getAttribute("data-country-code") == "") {
+          resetInput();
+        }
       }
     }
 
     // Bind the event listener
     document.addEventListener("mousedown", handleClickOutside);
+
     return () => {
       console.log("unbind")
       // Unbind the event listener on clean up
@@ -74,6 +77,14 @@ const Searchbar = (props) => {
       setResults(filteredResults);
     }
   };
+  const resetInput = () => {
+
+    refInput.current.setAttribute("data-country-code", "")
+    setSearchTerm("");
+    setOpenAutosuggest(false)
+    setFound(false)
+    setFoundCode('')
+  }
 
   const onChangeSearch = (e) => {
     //setSearchTerm(escapeRegexCharacters(e.target.value));
@@ -84,26 +95,26 @@ const Searchbar = (props) => {
     setSearchTerm(firstUpperValue);
   };
 
-  const clearAutosuggest = (e) => {
-    console.log(e)
-    setSearchTerm('');
-    setOpenAutosuggest(false);
+  const onSelect = (e, country) => {
+    setFoundCode(country.value)
+    setFound(true);
+    setSearchTerm(country.name);
+    setOpenAutosuggest(false)
+    refInput.current.setAttribute("data-country-code", country.value)
+    props.onSelect(country.value);
   }
 
 
+
   const renderedResults = results.map((country, i) => (
+
     <div
       key={`${country.name}_${i}`}
       className={`${styles.Search__autosuggest_item} theme__search__autosuggest_item`}
       countrycode={country.value}
-      onClick={(e) => {
-        setFound(country.value)
-        props.onSelect(country.value);
-        setSearchTerm(country.name);
-      }}
-    >
-      {wrapSearchTerm(country.name, searchTerm)}
-    </div>
+      onClick={(e) => onSelect(e, country)}>
+      { wrapSearchTerm(country.name, searchTerm)}
+    </div >
   ));
 
   return (
@@ -111,9 +122,9 @@ const Searchbar = (props) => {
       <div className={styles.Search} ref={ref} >
         <div className={`${styles.Search__input} theme__search__input`}>
 
-          <input ref={refInput} value={searchTerm} onClick={(e) => clearAutosuggest(e)} onChange={onChangeSearch} data-country-code={found} /><FiGlobe></FiGlobe>
+          <input onClick={() => resetInput()} ref={refInput} value={searchTerm} onChange={onChangeSearch} data-country-code={foundCode} /><FiGlobe></FiGlobe>
         </div>
-        <div className={`${styles.Search__autosuggest}  theme__search__autosuggest ${openAutosuggest === true && found !== true ? 'active' : ''}`}>{renderedResults}</div>
+        <div className={`${styles.Search__autosuggest}  theme__search__autosuggest ${openAutosuggest === true ? 'active' : ''}`}>{!found && renderedResults}</div>
       </div>
     </div>
   );
