@@ -49,12 +49,28 @@ const App = () => {
         .then((response) => response.json())
         .then((data) => {
           const countries = data.map((country) => ({
+            id: country.countryInfo._id,
             name: country.country,
             value: country.countryInfo.iso2,
+            flag: country.countryInfo.flag,
+            casesPerOneMillion: country.casesPerOneMillion,
+            deathsPerOneMillion: country.deathsPerOneMillion,
+            recoveredPerOneMillion: country.recoveredPerOneMillion,
+            cases: country.cases,
+            deaths: country.deaths,
+            revovered: country.recovered,
+            testsPerOneMillion: country.testsPerOneMillion,
+            tests: country.tests,
+            oneCasePerPeople: country.oneCasePerPeople,
+            oneDeathPerPeople: country.oneDeathPerPeople,
+            oneTestPerPeople: country.oneTestPerPeople,
+
           }));
           setCountries(countries);
-          setSearchResults(countries);
+          setSearchResults(countries); console.log(countries)
+
         });
+
     };
     getCountriesData();
   }, []);
@@ -76,6 +92,33 @@ const App = () => {
   const setSearchResultList = (data) => {
     setSearchResults(data);
   };
+
+
+
+  const newCountries = countries.sort(function (a, b) {
+    return a.oneCasePerPeople - b.oneCasePerPeople
+  })
+  function sortByColumn(a, colIndex, reverse) {
+    if (reverse === true) {
+      a.sort(sortFunction).reverse();
+    } else {
+      a.sort(sortFunction);
+    }
+
+    function sortFunction(a, b) {
+      console.log(" - b", b)
+      if (a[colIndex] === b[colIndex]) {
+        return 0;
+      } else {
+        return (a[colIndex] - b[colIndex]);
+      }
+    }
+    return a;
+  }
+  console.log(sortByColumn(countries, 'oneCasePerPeople', false))
+
+
+  //const newCountries = countries2.compareValues(oneCasePerPeople, 'desc');
   /* return empty div if useThemeMode component is mounted -  this avoids loading the light theme first on
     page reload if user has selected the dark theme */
   if (!mountedComponent) return <div />;
@@ -99,9 +142,32 @@ const App = () => {
           <div className={styles.App__graph}></div>
 
           <div className={styles.App__countries}>
-            {searchResults.map((country) => {
-              return <p key={country.name}>{country.name}</p>;
-            })}
+            <table className={styles.App__countryTable}>
+              <thead>
+                <tr>
+                  <td colSpan="2">Land</td>
+                  <td>Case/People</td>
+                  <td>Death/People</td>
+                  <td>Recovered/People</td>
+                  <td>Tests/Mill.</td>
+                </tr>
+              </thead>
+              <tbody>
+                {newCountries.map((country, i) => {
+
+                  return (<tr key={i}>
+                    <td><img src={country.flag} /></td>
+                    <td>{country.name}</td>
+                    <td>{country.oneCasePerPeople}</td>
+                    <td>{country.oneDeathPerPeople}</td>
+                    <td>{country.oneRecoveredPerPeople}</td>
+                    <td>{country.testsPerOneMillion}</td>
+                  </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+
           </div>
 
           <div className={styles.App__news}>
@@ -112,7 +178,7 @@ const App = () => {
           <div className={styles.App__map}></div>
         </div>
       </>
-    </ThemeProvider>
+    </ThemeProvider >
   );
 };
 
