@@ -13,11 +13,12 @@ const Searchbar = (props) => {
 
   useEffect(() => {
     getSuggestions();
-  }, [searchTerm]);
+  }, [searchTerm]); // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     props.setSearchResultList(results);
-  }, [results]);
+  }, [results]); // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     /**
      * Alert if clicked on outside of element
@@ -26,7 +27,7 @@ const Searchbar = (props) => {
 
       if (ref.current && !ref.current.contains(e.target)) {
         console.log("click outside", refInput.current)
-        if (refInput.current.getAttribute("data-country-code") == "") {
+        if (refInput.current.getAttribute("data-country-code") === "") {
           resetInput();
         }
       }
