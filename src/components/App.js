@@ -6,6 +6,7 @@ import newsApi from '../apis/newsApi';
 import { daysFromTodayInDate } from '../utils'; // need for request to news api e.g. last 30 days
 import styles from '../styles/App.module.scss';
 import Searchbar from './Searchbar';
+import Table from './Table'
 /* ThemeProvider is a helper component in the styled-components library that provides theming support.
 This helper component injects a theme into all React component below itself via the Context API.
 In the rendering tree, all styled-components will have access to the provided theme,
@@ -67,8 +68,7 @@ const App = () => {
 
           }));
           setCountries(countries);
-          setSearchResults(countries); console.log(countries)
-
+          setSearchResults(countries);
         });
 
     };
@@ -95,27 +95,6 @@ const App = () => {
 
 
 
-  const newCountries = countries.sort(function (a, b) {
-    return a.oneCasePerPeople - b.oneCasePerPeople
-  })
-  function sortByColumn(a, colIndex, reverse) {
-    if (reverse === true) {
-      a.sort(sortFunction).reverse();
-    } else {
-      a.sort(sortFunction);
-    }
-
-    function sortFunction(a, b) {
-      console.log(" - b", b)
-      if (a[colIndex] === b[colIndex]) {
-        return 0;
-      } else {
-        return (a[colIndex] - b[colIndex]);
-      }
-    }
-    return a;
-  }
-  console.log(sortByColumn(countries, 'oneCasePerPeople', false))
 
 
   //const newCountries = countries2.compareValues(oneCasePerPeople, 'desc');
@@ -142,32 +121,7 @@ const App = () => {
           <div className={styles.App__graph}></div>
 
           <div className={styles.App__countries}>
-            <table className={styles.App__countryTable}>
-              <thead>
-                <tr>
-                  <td colSpan="2">Land</td>
-                  <td>Case/People</td>
-                  <td>Death/People</td>
-                  <td>Recovered/People</td>
-                  <td>Tests/Mill.</td>
-                </tr>
-              </thead>
-              <tbody>
-                {newCountries.map((country, i) => {
-
-                  return (<tr key={i}>
-                    <td><img src={country.flag} /></td>
-                    <td>{country.name}</td>
-                    <td>{country.oneCasePerPeople}</td>
-                    <td>{country.oneDeathPerPeople}</td>
-                    <td>{country.oneRecoveredPerPeople}</td>
-                    <td>{country.testsPerOneMillion}</td>
-                  </tr>
-                  )
-                })}
-              </tbody>
-            </table>
-
+            <Table countries={countries} />
           </div>
 
           <div className={styles.App__news}>

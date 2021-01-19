@@ -1,0 +1,28 @@
+.Table {
+  &__countryTable {
+    max-height: 10em;
+    overflow-y: scroll;
+    border-collapse: collapse;
+    img {
+      max-width: 30px;
+    }
+    td {
+      text-align: right;
+    }
+    th {
+      cursor: pointer;
+    }
+    th,
+    td {
+      border: 1px solid grey;
+      padding: 0.5em;
+    }
+    td:nth-of-type(-n + 2) {
+      text-align: left;
+    }
+  }
+
+  &__toggle_active {
+    color: red;
+  }
+}
