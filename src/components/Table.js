@@ -7,6 +7,7 @@ const Table = ({ countries }) => {
     const [sortedCountries, setSortedCountries] = useState([]);
 
     useEffect(() => {
+
         setSortedCountries(countries)
     }, [countries]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -31,7 +32,7 @@ const Table = ({ countries }) => {
 
     const colKeys = [
         { name: '', key: 'flag', size: 0 },
-        { name: 'Country', key: 'country', size: 2 },
+        { name: 'Country', key: 'name', size: 2 },
         { name: 'Case / People', key: 'oneCasePerPeople', size: 1 },
         { name: 'Death / People', key: 'oneDeathPerPeople', size: 1 },
         { name: 'Test / People', key: 'oneTestPerPeople', size: 1 },
