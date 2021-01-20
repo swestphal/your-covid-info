@@ -6,7 +6,19 @@ export const GlobalStyles = createGlobalStyle`
     color: ${({ theme }) => theme.text};
     transition: all 0.250s ease-in;
   }
+  .box::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: #f5f5f5;
+  }
 
+  .box::-webkit-scrollbar {
+    width: 10px;
+    background-color: #f5f5f5;
+  }
+
+  .box::-webkit-scrollbar-thumb {
+    background-color: #f1950c;
+  }
   a {
     color: ${({ theme }) => theme.link};
   }
@@ -27,7 +39,7 @@ export const GlobalStyles = createGlobalStyle`
   .box {
     background:${({ theme }) => theme.box};
     border:1px solid ${({ theme }) => theme.boxBorder};
-    border-radius:10px;
+  
     box-shadow: 0px 3px 15px ${({ theme }) => theme.shadow};
   }
  
@@ -56,5 +68,36 @@ export const GlobalStyles = createGlobalStyle`
       border:1px solid ${({ theme }) => theme.boxBorder};
     }
   }
+
+  table {
+    width: 100%;
+    background-color: ${({ theme }) => theme.accenthover};
   
+   thead {
+    
+   
+    tr {
+      width:100%;
+    }
+  }
+   thead tr:after {
+    content: '';
+    overflow-y: scroll;
+    visibility: hidden;
+  }
+   
+
+  
+  thead tr th {
+    position: sticky; top: 0;
+    color:${({ theme }) => theme.text};
+    line-height:2em;
+    text-align:left;
+    background: ${({ theme }) => theme.accent};
+    span .toggler {
+      position:absolute;
+      right:10px;
+    }
+  }
+}
 `

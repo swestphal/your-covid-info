@@ -59,15 +59,15 @@ const Table = ({ countries }) => {
                     onClick={() => handleSortClick(colKey.key,)}> { colKey.name}
                     <span
                         className={activeCol === colKey.key ? styles.Table__toggle_active : ''}
-                    > {colKey.key !== 'flag' ? activeColToggle[colKey.key] ? '↑' : '↓' : ''}
+                    > {colKey.key !== 'flag' && activeCol === colKey.key ? activeColToggle[colKey.key] ? <span className="toggler">↑</span> : <span className="toggler">↓</span> : ''}
                     </span >
                 </th >)
         })
 
 
     return (
-        <>
-            <table className={styles.Table__countryTable}>
+        <div className={`${styles.Table__countryTable} box`}>
+            <table >
                 <thead>
                     <tr>
                         {renderedTableHeading}
@@ -88,7 +88,7 @@ const Table = ({ countries }) => {
                     })}
                 </tbody>
             </table>
-        </ >
+        </div >
     )
 }
 

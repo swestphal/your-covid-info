@@ -1,8 +1,15 @@
 .Table {
   &__countryTable {
-    max-height: 10em;
+    max-height: 30.75em;
     overflow-y: scroll;
-    border-collapse: collapse;
+
+    table {
+      border-collapse: collapse;
+      margin-right: 2px;
+    }
+    thead tr {
+      width: 100%;
+    }
     img {
       max-width: 30px;
     }
