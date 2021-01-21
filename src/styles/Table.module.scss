@@ -1,8 +1,8 @@
 .Table {
   &__countryTable {
     max-height: 30.75em;
+    overflow: hidden;
     overflow-y: scroll;
-
     table {
       border-collapse: collapse;
       margin-right: 2px;
