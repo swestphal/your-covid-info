@@ -69,7 +69,7 @@ const buildChartData = (data) => {
                     };
                     if (newDataPoint.counts >= 0) { type.push(newDataPoint.counts) } else {
                         //negative value -> not possible
-                        type.push(newDataPoint.counts)
+                        type.push(newDataPoint.counts * (-1))
                     }
                     if (first === true) {
                         let newLabelPoint = {
