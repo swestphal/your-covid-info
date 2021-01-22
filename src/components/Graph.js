@@ -18,12 +18,14 @@ const options = {
         callbacks: {
             label: function (tooltipItem, data) {
                 return numeral(tooltipItem.value).format("+0,0");
+
             },
         },
     },
     scales: {
         xAxes: [
             {
+                stacked: true,
                 type: "time",
                 time: {
                     format: "MM/DD/YY",
@@ -33,13 +35,14 @@ const options = {
         ],
         yAxes: [
             {
+
                 gridLines: {
                     display: false,
                 },
                 ticks: {
-                    // Include a dollar sign in the ticks
                     callback: function (value, index, values) {
                         return numeral(value).format("0a");
+                        //return (value.toLocaleString());
                     },
                 },
             },
@@ -48,33 +51,45 @@ const options = {
 };
 
 const buildChartData = (data) => {
-
-    let cases = [];
-    let deaths = [];
-    let recovered = [];
     let labels = [];
-    let charData = [];
+    let type = [];
+    let chartData = [];
+    let first = true;
+    casesTypes.map((caseType) => {
 
-    //casesTypes.map((caseType) => {
-    let caseType = { name: 'cases' }
-    let lastDataPoint;
-    //})
-    for (let date in data.cases) {
-        if (lastDataPoint) {
-            let newDataPoint = {
-                counts: data[caseType.name][date] - lastDataPoint,
-            };
-            if (newDataPoint.counts >= 0) cases.push(newDataPoint.counts);
-            let newLabelPoint = {
-                label: date
+        let lastDataPoint;
+        let i = 0;
+        for (let date in data[caseType.name]) {
+            if (!(i % 7)) {
+
+                // veränderungen pro Woche  -> lastDataPoint
+                if (lastDataPoint) {
+                    let newDataPoint = {
+                        counts: data[caseType.name][date] - lastDataPoint,
+                    };
+                    if (newDataPoint.counts >= 0) { type.push(newDataPoint.counts) } else {
+                        //negative value -> not possible
+                        type.push(newDataPoint.counts)
+                    }
+                    if (first === true) {
+                        let newLabelPoint = {
+                            label: date
+                        }
+                        labels.push(newLabelPoint.label);
+
+                    }
+                }
+                lastDataPoint = data[caseType.name][date];
             }
-            labels.push(newLabelPoint.label);
+            i++
         }
-        lastDataPoint = data[caseType.name][date];
-    }
+        chartData[caseType.name] = type;
+        type = [];
+        first = false
+    })
 
-    let set = { labels: labels, cases: cases }
 
+    let set = { labels: labels, cases: chartData.cases, deaths: chartData.deaths, recovered: chartData.recovered }
     return set;
 };
 
@@ -82,7 +97,7 @@ const Graph = () => {
     const [data, setData] = useState({});
     useEffect(() => {
         const fetchData = async () => {
-            await fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=120")
+            await fetch("https://disease.sh/v3/covid-19/historical/all?lastdays=360")
                 .then((response) => {
                     return response.json();
                 })
@@ -104,12 +119,28 @@ const Graph = () => {
                         labels: data.labels,
                         datasets: [
                             {
-                                label: casesTypes.map(caseType => caseType),
+                                label: 'Cases',
                                 data: data.cases,
                                 borderWidth: 1,
                                 fill: true,
-                                backgroundColor: "rgba(75,192,192,0.2)",
-                                borderColor: "rgba(75,192,192,1)"
+                                backgroundColor: "rgb(108 113 196 / 41%)",
+                                borderColor: "#6C71C4"
+                            },
+                            {
+                                label: 'Deaths',
+                                data: data.deaths,
+                                borderWidth: 1,
+                                fill: true,
+                                backgroundColor: "rgb(47 47 47 / 34%)",
+                                borderColor: "#092B36"
+                            },
+                            {
+                                label: 'Recovered',
+                                data: data.recovered,
+                                borderWidth: 1,
+                                fill: true,
+                                backgroundColor: "rgb(98 142 30 / 34%)",
+                                borderColor: "#859900"
                             },
                         ],
                     }}
