@@ -1,6 +1,7 @@
 .Table {
+  overflow-y: scroll;
   &__countryTable {
-    max-height: 30.75em;
+    max-height: 29vw;
     overflow: hidden;
     overflow-y: scroll;
     table {
